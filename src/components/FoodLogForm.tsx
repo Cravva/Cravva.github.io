@@ -7,10 +7,12 @@ import { FoodEntry } from "@/lib/nutrition"
 import { Plus, Apple } from "lucide-react"
 
 interface FoodLogFormProps {
-  onAddFood: (food: Omit<FoodEntry, 'id' | 'timestamp'>) => void
+  onAddFood?: (food: Omit<FoodEntry, 'id' | 'timestamp'>) => void
+  onSubmit?: (food: Omit<FoodEntry, 'id' | 'timestamp'>) => void
+  onCancel?: () => void
 }
 
-export function FoodLogForm({ onAddFood }: FoodLogFormProps) {
+export function FoodLogForm({ onAddFood, onSubmit, onCancel }: FoodLogFormProps) {
   const [food, setFood] = useState({
     name: '',
     quantity: 1,
@@ -24,7 +26,11 @@ export function FoodLogForm({ onAddFood }: FoodLogFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (food.name.trim()) {
-      onAddFood(food)
+      if (onSubmit) {
+        onSubmit(food)
+      } else if (onAddFood) {
+        onAddFood(food)
+      }
       setFood({
         name: '',
         quantity: 1,
@@ -151,9 +157,16 @@ export function FoodLogForm({ onAddFood }: FoodLogFormProps) {
           </CardContent>
         </Card>
 
-        <Button type="submit" variant="gradient" size="lg" className="w-full">
-          Add Food
-        </Button>
+        <div className="flex gap-3">
+          {onCancel && (
+            <Button type="button" variant="outline" size="lg" className="flex-1" onClick={onCancel}>
+              Cancel
+            </Button>
+          )}
+          <Button type="submit" variant="gradient" size="lg" className="flex-1">
+            Add Food
+          </Button>
+        </div>
       </form>
     </div>
   )
