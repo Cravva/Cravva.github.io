@@ -4,8 +4,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { UserStats, calculateMacroTargets } from "@/lib/nutrition"
-import { Calculator, User, Target, Activity } from "lucide-react"
+import { UserStats, calculateMacroTargets, macroSplitOptions } from "@/lib/nutrition"
+import { Calculator, User, Target, Activity, Zap } from "lucide-react"
 
 interface UserStatsFormProps {
   onCalculate: (stats: UserStats) => void
@@ -19,7 +19,8 @@ export function UserStatsForm({ onCalculate, initialStats }: UserStatsFormProps)
     weight: 70,
     height: 175,
     activityLevel: 'moderate',
-    goal: 'maintain'
+    goal: 'maintain',
+    macroSplit: 'balanced'
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -143,6 +144,53 @@ export function UserStatsForm({ onCalculate, initialStats }: UserStatsFormProps)
                 </SelectContent>
               </Select>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Macro Split */}
+        <Card className="animate-slide-up" style={{ animationDelay: '0.15s' }}>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Zap className="h-5 w-5 text-primary" />
+              Macro Split
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="macroSplit">Choose Your Macro Distribution</Label>
+              <Select value={stats.macroSplit} onValueChange={(value) => updateStats('macroSplit', value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(macroSplitOptions).map(([key, split]) => (
+                    <SelectItem key={key} value={key}>
+                      {split.name} - {split.description}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {stats.macroSplit && (
+              <div className="p-3 bg-muted/50 rounded-lg">
+                <div className="text-sm font-medium mb-2">Current Split:</div>
+                <div className="grid grid-cols-3 gap-3 text-sm">
+                  <div className="text-center">
+                    <div className="font-semibold text-protein">{macroSplitOptions[stats.macroSplit].protein}%</div>
+                    <div className="text-muted-foreground">Protein</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-carbs">{macroSplitOptions[stats.macroSplit].carbs}%</div>
+                    <div className="text-muted-foreground">Carbs</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-fats">{macroSplitOptions[stats.macroSplit].fats}%</div>
+                    <div className="text-muted-foreground">Fats</div>
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 

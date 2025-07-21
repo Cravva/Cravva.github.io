@@ -7,6 +7,53 @@ export interface UserStats {
   height: number // cm
   activityLevel: 'sedentary' | 'light' | 'moderate' | 'very' | 'extreme'
   goal: 'maintain' | 'cut' | 'bulk'
+  macroSplit: 'balanced' | 'high-protein' | 'low-carb' | 'high-carb' | 'custom'
+}
+
+export interface MacroSplit {
+  name: string
+  description: string
+  protein: number // percentage
+  carbs: number // percentage
+  fats: number // percentage
+}
+
+export const macroSplitOptions: Record<string, MacroSplit> = {
+  balanced: {
+    name: 'Balanced',
+    description: '30% protein, 40% carbs, 30% fats',
+    protein: 30,
+    carbs: 40,
+    fats: 30
+  },
+  'high-protein': {
+    name: 'High Protein',
+    description: '40% protein, 30% carbs, 30% fats',
+    protein: 40,
+    carbs: 30,
+    fats: 30
+  },
+  'low-carb': {
+    name: 'Low Carb',
+    description: '35% protein, 20% carbs, 45% fats',
+    protein: 35,
+    carbs: 20,
+    fats: 45
+  },
+  'high-carb': {
+    name: 'High Carb',
+    description: '25% protein, 50% carbs, 25% fats',
+    protein: 25,
+    carbs: 50,
+    fats: 25
+  },
+  custom: {
+    name: 'Custom',
+    description: 'Set your own macro ratios',
+    protein: 30,
+    carbs: 40,
+    fats: 30
+  }
 }
 
 export interface MacroTargets {
@@ -69,13 +116,14 @@ export function calculateCalorieTarget(stats: UserStats): number {
   }
 }
 
-// Calculate macro targets (40% carbs, 30% protein, 30% fats)
+// Calculate macro targets using selected macro split
 export function calculateMacroTargets(stats: UserStats): MacroTargets {
   const calories = calculateCalorieTarget(stats)
+  const split = macroSplitOptions[stats.macroSplit]
   
-  const proteinCalories = calories * 0.3
-  const carbCalories = calories * 0.4
-  const fatCalories = calories * 0.3
+  const proteinCalories = calories * (split.protein / 100)
+  const carbCalories = calories * (split.carbs / 100)
+  const fatCalories = calories * (split.fats / 100)
   
   return {
     calories,
