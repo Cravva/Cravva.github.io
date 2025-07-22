@@ -5,8 +5,8 @@ import { UserStatsForm } from "@/components/UserStatsForm"
 import { FoodLogForm } from "@/components/FoodLogForm"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { UserStats, MacroTargets, FoodEntry, calculateMacroTargets, calculateDailyTotals } from "@/lib/nutrition"
-import { Clock, Trash2 } from "lucide-react"
+import { UserStats, MacroTargets, FoodEntry, calculateMacroTargets, calculateDailyTotals, calculateRemaining } from "@/lib/nutrition"
+import { Clock, Trash2, Target } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 export default function MacroTracker() {
@@ -102,10 +102,13 @@ export default function MacroTracker() {
       )
     }
 
+    const remaining = calculateRemaining(macroTargets, consumed)
+    
     return (
       <div className="space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">Today's Progress</h1>
+          <Target className="h-12 w-12 text-primary mx-auto" />
+          <h1 className="text-2xl font-bold">Daily Progress</h1>
           <p className="text-muted-foreground">
             {new Date().toLocaleDateString('en-US', { 
               weekday: 'long', 
@@ -117,6 +120,57 @@ export default function MacroTracker() {
         </div>
 
         <MacroProgress targets={macroTargets} consumed={consumed} />
+
+        {/* Consumed vs Remaining */}
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="bg-gradient-card">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Consumed</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-calories">Calories</span>
+                <span className="font-semibold text-calories">{consumed.calories}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-protein">Protein</span>
+                <span className="font-semibold text-protein">{consumed.protein}g</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-carbs">Carbs</span>
+                <span className="font-semibold text-carbs">{consumed.carbs}g</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-fats">Fats</span>
+                <span className="font-semibold text-fats">{consumed.fats}g</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-card">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Remaining</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-calories">Calories</span>
+                <span className="font-semibold text-calories">{remaining.calories}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-protein">Protein</span>
+                <span className="font-semibold text-protein">{remaining.protein}g</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-carbs">Carbs</span>
+                <span className="font-semibold text-carbs">{remaining.carbs}g</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-fats">Fats</span>
+                <span className="font-semibold text-fats">{remaining.fats}g</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         <div className="flex gap-2">
           <Button variant="gradient" size="lg" className="flex-1" onClick={() => setCurrentPage('log')}>
