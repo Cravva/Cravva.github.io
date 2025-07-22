@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      food_products: {
+        Row: {
+          barcode: string | null
+          brand: string | null
+          calories_per_100g: number
+          carbs_per_100g: number
+          category: string | null
+          created_at: string
+          fat_per_100g: number
+          fiber_per_100g: number | null
+          id: string
+          name: string
+          protein_per_100g: number
+          sodium_per_100mg: number | null
+          store: string | null
+          sugar_per_100g: number | null
+          updated_at: string
+        }
+        Insert: {
+          barcode?: string | null
+          brand?: string | null
+          calories_per_100g: number
+          carbs_per_100g?: number
+          category?: string | null
+          created_at?: string
+          fat_per_100g?: number
+          fiber_per_100g?: number | null
+          id?: string
+          name: string
+          protein_per_100g?: number
+          sodium_per_100mg?: number | null
+          store?: string | null
+          sugar_per_100g?: number | null
+          updated_at?: string
+        }
+        Update: {
+          barcode?: string | null
+          brand?: string | null
+          calories_per_100g?: number
+          carbs_per_100g?: number
+          category?: string | null
+          created_at?: string
+          fat_per_100g?: number
+          fiber_per_100g?: number | null
+          id?: string
+          name?: string
+          protein_per_100g?: number
+          sodium_per_100mg?: number | null
+          store?: string | null
+          sugar_per_100g?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
