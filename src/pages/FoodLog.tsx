@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react"
 import { Navigation } from "@/components/Navigation"
 import { FoodLogForm } from "@/components/FoodLogForm"
+import { FoodSearch } from "@/components/FoodSearch"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FoodEntry, calculateDailyTotals } from "@/lib/nutrition"
-import { Utensils, Trash2, QrCode, Plus } from "lucide-react"
+import { Utensils, Trash2, QrCode, Plus, Search } from "lucide-react"
 import { BarcodeScanner } from "@capacitor-community/barcode-scanner"
 import { useToast } from "@/hooks/use-toast"
 
 export default function FoodLog() {
   const [foodEntries, setFoodEntries] = useState<FoodEntry[]>([])
   const [showForm, setShowForm] = useState(false)
+  const [showFoodSearch, setShowFoodSearch] = useState(false)
+  const [scannedBarcode, setScannedBarcode] = useState<string | null>(null)
   const { toast } = useToast()
 
   // Load entries from localStorage on mount
@@ -37,6 +40,8 @@ export default function FoodLog() {
     }
     setFoodEntries(prev => [...prev, newEntry])
     setShowForm(false)
+    setShowFoodSearch(false)
+    setScannedBarcode(null)
     toast({
       title: "Food added!",
       description: `${entry.name} has been logged to your daily intake.`
@@ -66,11 +71,12 @@ export default function FoodLog() {
         document.body.classList.remove('scanner-active')
         
         if (result.hasContent) {
+          setScannedBarcode(result.content)
+          setShowFoodSearch(true)
           toast({
             title: "Barcode scanned!",
-            description: `Found: ${result.content}. Food database lookup coming soon!`
+            description: `Searching for product: ${result.content}`
           })
-          // TODO: Implement food database lookup with scanned barcode
         }
       } else {
         toast({
@@ -135,21 +141,30 @@ export default function FoodLog() {
         </Card>
 
         {/* Action Buttons */}
-        <div className="flex gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <Button 
             onClick={() => setShowForm(true)} 
             variant="gradient" 
-            className="flex-1"
+            className="col-span-1"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add Food
+            Manual
+          </Button>
+          <Button 
+            onClick={() => setShowFoodSearch(true)} 
+            variant="outline"
+            className="col-span-1"
+          >
+            <Search className="h-4 w-4 mr-2" />
+            Search
           </Button>
           <Button 
             onClick={handleScanBarcode} 
             variant="outline"
-            className="px-4"
+            className="col-span-1"
           >
-            <QrCode className="h-4 w-4" />
+            <QrCode className="h-4 w-4 mr-2" />
+            Scan
           </Button>
         </div>
 
@@ -224,6 +239,18 @@ export default function FoodLog() {
               />
             </div>
           </div>
+        )}
+
+        {/* Food Search Modal */}
+        {showFoodSearch && (
+          <FoodSearch
+            onSelectFood={handleAddFood}
+            onClose={() => {
+              setShowFoodSearch(false)
+              setScannedBarcode(null)
+            }}
+            initialBarcode={scannedBarcode || undefined}
+          />
         )}
       </div>
     </div>
