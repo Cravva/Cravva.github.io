@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import MacroTracker from "./MacroTracker"
 import { UserStatsForm } from "@/components/UserStatsForm"
 import { Navigation } from "@/components/Navigation"
@@ -7,12 +8,13 @@ import { UserStats } from "@/lib/nutrition"
 const Index = () => {
   const [currentTab, setCurrentTab] = useState('home')
   const [userStats, setUserStats] = useState<UserStats | null>(null)
+  const navigate = useNavigate()
 
   const handleNavigate = (page: string) => {
     if (page === 'log') {
-      window.location.href = '/log'
+      navigate('/log')
     } else if (page === 'history') {
-      window.location.href = '/history'
+      navigate('/history')
     } else if (page === 'calculator') {
       setCurrentTab('calculator')
     } else {
